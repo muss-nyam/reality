@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Nome sotto l'icona e titolo della scheda: cambialo qui -->
+  <title>Regia</title>
+  <meta name="apple-mobile-web-app-title" content="Regia">
+  <meta name="application-name" content="Regia">
+  <meta name="theme-color" content="#14122b">
+  <!-- Icone: per cambiarle carica nuove immagini con lo stesso nome e aumenta il numero dopo ?v= -->
+  <link rel="apple-touch-icon" href="icona-180.png?v=2">
+  <link rel="icon" type="image/png" sizes="192x192" href="icona-192.png?v=2">
+  <link rel="icon" type="image/png" sizes="512x512" href="icona-512.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --notte: #14122b; --palco: #1f1c3d; --luce: #fff6e3; --nebbia: #a9a3c9; --tally: #ff4d5e; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--notte); color: var(--luce); font: 16px/1.5 'Manrope', system-ui, sans-serif;
+      display: grid; place-items: center; padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
+    main { width: 100%; max-width: 420px; text-align: center; }
+    img.icona { width: 96px; height: 96px; border-radius: 22px; }
+    h1 { font-family: 'Anton', Impact, sans-serif; font-weight: 400; font-size: 34px; line-height: 1.1; margin: 16px 0 6px; }
+    p { color: var(--nebbia); margin: 0 0 18px; }
+    .passi { text-align: left; background: var(--palco); border-radius: 16px; padding: 16px 18px; margin: 18px 0; }
+    .passi h2 { font-size: 15px; margin: 0 0 8px; }
+    .passi ol { margin: 0; padding-left: 20px; }
+    .passi li { margin: 4px 0; }
+    .btn { display: block; width: 100%; padding: 15px; border-radius: 14px; background: var(--tally); color: #fff; font-weight: 800; font-size: 17px; text-decoration: none; }
+    .piccolo { font-size: 13px; margin-top: 14px; }
+  </style>
+</head>
+<body>
+  <main id="m">
+    <img class="icona" src="icona-180.png?v=2" alt="">
+    <h1>Un attimo…</h1>
+  </main>
+  <script>
+    // Indirizzo pubblico dell'app (quello che finisce con /exec)
+    var APP = 'https://script.google.com/macros/s/AKfycbxS7czJIMz7pbIQkrlQ4-oDjPaQotVV_SKG0k-TnYaCh1TS7XyYJ5ruvPlWvCAmKuXNDQ/exec';
+
+    var q = new URLSearchParams(location.search);
+    var p = (q.get('p') || '').replace(/[^A-Za-z0-9]/g, '');
+    var m = document.getElementById('m');
+    var standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+
+    if (!p) {
+      m.innerHTML = '<img class="icona" src="icona-180.png?v=2" alt=""><h1>Ti serve il tuo link</h1><p>Usa il link personale che ti ha mandato il conduttore.</p>';
+    } else if (q.get('auto') === '1' || standalone) {
+      location.replace(APP + '?p=' + p);
+    } else {
+      // Da qui in poi l'indirizzo salvato con "Aggiungi a Home" apre direttamente il gioco
+      q.set('auto', '1');
+      history.replaceState(null, '', location.pathname + '?' + q.toString());
+      var ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      var passi = ios
+        ? '<li>Tocca il tasto <b>Condividi</b> (il quadrato con la freccia in su)</li><li>Scorri e scegli <b>Aggiungi alla schermata Home</b></li><li>Tocca <b>Aggiungi</b></li>'
+        : '<li>Tocca il menu <b>⋮</b> in alto a destra</li><li>Scegli <b>Aggiungi a schermata Home</b> (o <b>Installa app</b>)</li><li>Conferma con <b>Aggiungi</b></li>';
+      m.innerHTML = '<img class="icona" src="icona-180.png?v=2" alt="">' +
+        '<h1>La tua regia</h1><p>Link del conduttore: tienilo per te, si apre con il PIN.</p>' +
+        '<div class="passi"><h2>Mettilo sulla schermata Home</h2><ol>' + passi + '</ol></div>' +
+        '<a class="btn" href="' + APP + '?p=' + p + '">Entra in regia</a>' +
+        '<p class="piccolo">Se compare "Impossibile aprire il file", apri questo link in una finestra in incognito.</p>';
+    }
+  </script>
+</body>
+</html>
